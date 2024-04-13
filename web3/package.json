@@ -1,0 +1,27 @@
+{
+  "name": "web3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "-": "^0.0.1",
+    "@openzeppelin/contracts": "^5.0.2",
+    "fs-extra": "^11.2.0",
+    "path": "^0.12.7",
+    "save": "^2.9.0",
+    "save-dev": "^0.0.1-security",
+    "solc": "^0.8.25",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "web3": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7"
+  }
+}
