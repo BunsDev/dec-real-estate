@@ -5,19 +5,31 @@ import { MetaMaskProvider } from "@metamask/sdk-react";
 import { NextUIProvider } from "@nextui-org/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<ThemeContextType["theme"]>("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme !== null) {
+      setTheme(savedTheme as ThemeContextType["theme"]);
+    }
+  }, []);
+
+  const changeTheme = (theme: ThemeContextType["theme"]) => {
+    setTheme(theme);
+    localStorage.setItem("theme", theme);
+  };
 
   const host =
     typeof window !== "undefined" ? window.location.host : "defaultHost";
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: changeTheme }}>
       <NextUIProvider>
         <MetaMaskProvider
-          debug={false}
+          debug={true}
           sdkOptions={{
             dappMetadata: {
               name: "Example React Dapp",
