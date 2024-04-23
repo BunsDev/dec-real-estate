@@ -1,4 +1,3 @@
-import Head from "next/head";
 import React, { ReactNode, useContext, useEffect } from "react";
 import {
   Navbar,
@@ -13,6 +12,11 @@ import { ThemeContext } from "@/contexts";
 import { Link as LucideLink, MoonStar, Sun } from "lucide-react";
 import { useSDK } from "@metamask/sdk-react";
 import { MetamaskInstallModal } from "./MetamaskInstallModal";
+import { ethers } from "ethers";
+import {
+  useMetamaskExtensionInstallModalStore,
+  useMetamaskWalletStore,
+} from "@/stores";
 
 interface LayoutProps {
   children: ReactNode;
@@ -20,14 +24,35 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const themeContext = useContext(ThemeContext);
-  const [showMetamaskModal, setShowMetamaskModal] = React.useState(true);
+  const { sdk, connected, connecting, provider, chainId, account, balance } =
+    useSDK();
+
+  const globalWalletStore = useMetamaskWalletStore();
+  const metamaskExtensionInstallModalStore =
+    useMetamaskExtensionInstallModalStore();
+
+  // Handling the statechange of the wallet globally
+  useEffect(() => {
+    console.log("chainId: ", chainId);
+    console.log("balance: ", balance);
+    if (!connected && !connecting) {
+      globalWalletStore.setAddress("");
+      globalWalletStore.setBalance("0x0");
+      globalWalletStore.setChainId("");
+    } else if (!connected && connecting) {
+      globalWalletStore.setAddress("");
+      globalWalletStore.setBalance("0x0");
+      globalWalletStore.setChainId("");
+    } else if (connected) {
+      globalWalletStore.setAddress(account ?? "");
+      globalWalletStore.setBalance(balance ?? "0x0");
+      globalWalletStore.setChainId(chainId ?? "");
+    }
+  }, [chainId, account, balance]);
 
   const checkMetamaskAvailability = async () => {
     return typeof window.ethereum !== "undefined" && window.ethereum.isMetaMask;
   };
-
-  const { sdk, connected, connecting, provider, chainId, account, balance } =
-    useSDK();
 
   const themeChangeHandler = (event: React.MouseEvent) => {
     themeContext.setTheme(themeContext.theme === "light" ? "dark" : "light");
@@ -48,15 +73,19 @@ export function Layout({ children }: LayoutProps) {
   };
 
   const renderAccountInfo = () => {
-    if (connecting && !connected) {
+    if (connected) {
+      return (
+        <span>
+          {convertEthBalanceToDecimal(globalWalletStore.balance ?? "0x0")} Eth
+        </span>
+      );
+    } else if (!connected && connecting) {
       return (
         <Button variant="shadow" color="primary" isLoading>
           Connecting...
         </Button>
       );
-    } else if (connected && !connecting) {
-      return <span>{balance} Eth</span>;
-    } else if (!connected && !connecting) {
+    } else {
       return (
         <Button
           variant="shadow"
@@ -68,6 +97,10 @@ export function Layout({ children }: LayoutProps) {
         </Button>
       );
     }
+  };
+
+  const convertEthBalanceToDecimal = (balance: string) => {
+    return ethers.formatEther(balance);
   };
 
   return (
@@ -111,8 +144,8 @@ export function Layout({ children }: LayoutProps) {
       <main className={`${themeContext.theme} text-foreground bg-background`}>
         {children}
         <MetamaskInstallModal
-          isOpen={showMetamaskModal}
-          onOpenChange={setShowMetamaskModal}
+          isOpen={metamaskExtensionInstallModalStore.isOpen}
+          onOpenChange={metamaskExtensionInstallModalStore.setOpen}
         />
       </main>
     </>

@@ -52,7 +52,12 @@ export function MetamaskInstallModal({
           <Button color="danger" onClick={closeModalHandler}>
             Close
           </Button>
-          <Button color="primary" variant="shadow" as={Link} href="">
+          <Button
+            color="primary"
+            variant="shadow"
+            as={Link}
+            href="https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+          >
             Install Extension
           </Button>
         </ModalFooter>
