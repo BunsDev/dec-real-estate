@@ -16,7 +16,10 @@ import { ethers } from "ethers";
 import {
   useMetamaskExtensionInstallModalStore,
   useMetamaskWalletStore,
+  useMetamaskWrongChainIDModalStore,
 } from "@/stores";
+import { MetamaskWrongChainModal } from "./MetamaskWrongChainModal";
+import Image from "next/image";
 
 interface LayoutProps {
   children: ReactNode;
@@ -30,6 +33,7 @@ export function Layout({ children }: LayoutProps) {
   const globalWalletStore = useMetamaskWalletStore();
   const metamaskExtensionInstallModalStore =
     useMetamaskExtensionInstallModalStore();
+  const metamaskWrongChainIDModalStore = useMetamaskWrongChainIDModalStore();
 
   // Handling the statechange of the wallet globally
   useEffect(() => {
@@ -47,6 +51,11 @@ export function Layout({ children }: LayoutProps) {
       globalWalletStore.setAddress(account ?? "");
       globalWalletStore.setBalance(balance ?? "0x0");
       globalWalletStore.setChainId(chainId ?? "");
+      if (chainId !== process.env.NEXT_PUBLIC_CHAIN_ID) {
+        metamaskWrongChainIDModalStore.setOpen(true);
+      } else {
+        metamaskWrongChainIDModalStore.setOpen(false);
+      }
     }
   }, [chainId, account, balance]);
 
@@ -75,9 +84,17 @@ export function Layout({ children }: LayoutProps) {
   const renderAccountInfo = () => {
     if (connected) {
       return (
-        <span>
-          {convertEthBalanceToDecimal(globalWalletStore.balance ?? "0x0")} Eth
-        </span>
+        <div className="flex">
+          <span className="my-auto">
+            {convertEthBalanceToDecimal(globalWalletStore.balance ?? "0x0")}
+          </span>
+          <Image
+            alt={"Ethereum Logo"}
+            src={"/ethereum-logo.svg"}
+            width={30}
+            height={30}
+          />
+        </div>
       );
     } else if (!connected && connecting) {
       return (
@@ -146,6 +163,10 @@ export function Layout({ children }: LayoutProps) {
         <MetamaskInstallModal
           isOpen={metamaskExtensionInstallModalStore.isOpen}
           onOpenChange={metamaskExtensionInstallModalStore.setOpen}
+        />
+        <MetamaskWrongChainModal
+          isOpen={metamaskWrongChainIDModalStore.isOpen}
+          onOpenChange={metamaskWrongChainIDModalStore.setOpen}
         />
       </main>
     </>
