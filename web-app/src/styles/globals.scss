@@ -9,6 +9,7 @@
 @import './BadChainModal.scss';
 @import './MarketplaceLayout.scss';
 @import './NewListing.scss';
+@import './MarketpalceListings.scss';
 
 $global-font: 'Sora', sans-serif;
 
@@ -18,6 +19,9 @@ $global-font: 'Sora', sans-serif;
 
 body {
   @include apply-font;
+  
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 .page-title {
