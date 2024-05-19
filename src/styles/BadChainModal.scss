@@ -1,0 +1,14 @@
+ 
+.tutorial-image {
+  @apply mx-auto;
+}
+
+
+.step-text {
+  @apply my-3;
+
+  font-family: 'Sora',  sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+}

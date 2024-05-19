@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import './LandingPage.scss';
+@import './Layout.scss';
+@import './MetamaskInstallModal.scss';
+@import './BadChainModal.scss';
+@import './MarketplaceLayout.scss';
+@import './NewListing.scss';
+@import './MarketpalceListings.scss';
+
+$global-font: 'Sora', sans-serif;
+
+@mixin apply-font {
+  font-family: $global-font;
+}
+
+body {
+  @include apply-font;
+  
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.page-title {
+  @apply text-3xl font-bold;
+
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-container {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  
+}
