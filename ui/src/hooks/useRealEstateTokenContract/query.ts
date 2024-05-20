@@ -1,5 +1,5 @@
 import { serverURLs } from "@/utils";
-import { Abi } from "@/utils/mongodb/AbiCollection/types";
+import { Abi } from "@/utils/db/AbiCollection/types";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchAbi = async (abiName: string): Promise<Abi> => {

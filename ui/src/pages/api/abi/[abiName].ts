@@ -1,5 +1,5 @@
+import { abiCollection } from "@/utils/db";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { abiCollection } from "db";
 
 export default async function handler(
   req: NextApiRequest,

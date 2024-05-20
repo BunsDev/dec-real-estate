@@ -10,5 +10,5 @@ export const clientURLs = {
 };
 
 export const serverURLs = {
-  abi_resolveAbi: (name: string) => `${apiPath}/abi/${name}`,
+  abi_resolveAbi: (name: string) => `/api/abi/${name}`,
 };
