@@ -16,6 +16,12 @@ export class RealEstateCollection
 {
   collectionName = "RealEstate";
 
+  async fetchAllAssetsByCreator(
+    creator: string
+  ): Promise<WithId<RealEstate>[]> {
+    return this.collection.find({ creator }).toArray();
+  }
+
   async fetchAll(): Promise<WithId<RealEstate>[]> {
     return this.collection.find().toArray();
   }

@@ -40,6 +40,12 @@ export abstract class MongoCollection<DataT extends BSON.Document> {
   }
 }
 
+export interface DocumentTimestap {
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// TODO separate this interface
 /**
  * Generic interface for mongodb collection actions
  * @param DataT - Shema of the collection without the _id field

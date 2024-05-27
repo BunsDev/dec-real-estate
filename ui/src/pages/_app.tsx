@@ -5,9 +5,15 @@ import "@/styles/globals.scss";
 import { MetaMaskProvider } from "@metamask/sdk-react";
 import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import axios from "axios";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+
+axios.defaults.baseURL = "http://localhost:3000/api";
+axios.defaults.headers.post["Content-Type"] = "application/json";
+axios.defaults.headers.put["Content-Type"] = "application/json";
+axios.defaults.headers.delete["Content-Type"] = "application/json";
 
 const queryClient = new QueryClient();
 

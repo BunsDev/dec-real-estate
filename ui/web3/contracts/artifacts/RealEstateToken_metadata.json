@@ -212,6 +212,19 @@
 				"inputs": [
 					{
 						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "TokenCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
 						"internalType": "address",
 						"name": "operator",
 						"type": "address"
@@ -413,15 +426,15 @@
 						"internalType": "uint256",
 						"name": "supply",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "basePrice",
+						"type": "uint256"
 					}
 				],
 				"name": "createToken",
 				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					},
 					{
 						"internalType": "uint256",
 						"name": "",
@@ -900,7 +913,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/RealEstateToken.sol": "RealEstateToken"
+			"RealEstateToken.sol": "RealEstateToken"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -1034,12 +1047,12 @@
 				"dweb:/ipfs/QmQyRpyPRL5SQuAgj6SHmbir3foX65FJjbVTTQrA2EFg6L"
 			]
 		},
-		"contracts/RealEstateToken.sol": {
-			"keccak256": "0x17ec6247944efc55b0ce6dc8357f2b62b927a388deda4e984cc39a67f9743c50",
+		"RealEstateToken.sol": {
+			"keccak256": "0xb198ec5176be2adc57cec2025a6629808d8ba598cf5a944b4af2a5177352214e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9f1ec3ba06babf013621b6e48889a9f94f4f69bfb8efddd01214b59d3d751099",
-				"dweb:/ipfs/QmfQFBGJjYqjUyxjt328q4ink1DtuyWij9Ej7qDBhBWv5d"
+				"bzz-raw://aadb50f9ac027b416062e0d4996966cc4b8f6c312b77a66ea10af044b2e010da",
+				"dweb:/ipfs/QmZGeKqucC1fbTFntpKKpEA1fkiZm12GmodDwf1apacDKp"
 			]
 		}
 	},

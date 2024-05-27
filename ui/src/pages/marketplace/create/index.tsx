@@ -2,67 +2,85 @@ import { MarketplaceLayout } from "@/components/marketplace/layout";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import { useInputValidation } from "@/hooks/useInputValidation";
 import { useRealEstateTokenContract } from "@/hooks/useRealEstateTokenContract";
-import { create } from "domain";
 import { useEffect, useState } from "react";
-import { Contract, JsonRpcSigner, Wallet } from "ethers";
+import { Contract, JsonRpcSigner } from "ethers";
 import { useAbiQuery } from "@/hooks/useRealEstateTokenContract/query";
-import { getLocalProvider } from "@/utils/ethereum";
-import { InterfaceAbi } from "ethers";
-import { sign } from "crypto";
+import { createToken, getLocalProvider } from "@/utils/ethereum";
 import { BaseContract } from "ethers";
 import { useMetamaskWalletStore } from "@/stores";
-import { RealEstateToken__factory } from "../../../../web3/typechain-types";
-import { get } from "http";
-import { AddressLike } from "ethers";
+import axios from "axios";
+import { serverURLs } from "@/utils";
+import { RealEstate } from "@/utils/db/RealEstateCollection/types";
 
 const CreateListing = () => {
-  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
-  const [contract, setContract] = useState<BaseContract | null>(null);
   const abi = useAbiQuery("RealEstateToken");
+  const wallet = useMetamaskWalletStore((state) => state);
 
-  const metamask = useMetamaskWalletStore((state) => state.address);
-  //const tokenContract = useRealEstateTokenContract();
-  //let listingNameValidation = useInputValidation([{}]);
-  let listingValidation = useInputValidation([
+  const listingNameValidation = useInputValidation([
+    {
+      rule: /^.+$/,
+      errorMessage: "Listing name cannot be empty",
+    },
+  ]);
+
+  const descriptionValidation = useInputValidation([
+    { rule: /^.+$/, errorMessage: "Description cannot be empty" },
+  ]);
+
+  const listingPriceValidation = useInputValidation([
     { rule: /^\d+(\.\d+)?$/g, errorMessage: "Please enter a valid number" },
   ]);
 
-  console.log(
-    "contract address: ",
-    `${process.env.NEXT_PUBLIC_REAL_ESTATE_TOKEN_CONTRACT_ADDRESS}`
-  );
-
-  console.log("abi: ", abi.data?.abi);
-
-  const testContract = async () => {
-    const provider = getLocalProvider();
-    const signer = await provider.getSigner();
-    const contract = new Contract(
-      `${process.env.NEXT_PUBLIC_REAL_ESTATE_TOKEN_CONTRACT_ADDRESS}`,
-      abi.data!.abi,
-      provider
-    );
-
-    const contractWithSigner = contract.connect(signer);
-    // @ts-ignore
-    const tx = await contractWithSigner.createToken(10000);
-  };
-
-  useEffect(() => {
-    if (abi.isSuccess) {
-      testContract();
-    }
-  }, [abi.isSuccess]);
-
-  // useEffect(() => {
-  //   console.log("tokenContract: ", tokenContract.contract);
-  //   tokenContract.contract;
-  // }, [tokenContract]);
+  let tokenAmountValidation = useInputValidation([
+    {
+      rule: /^[1-9]\d*$/,
+      errorMessage: "Please enter a valid number",
+    },
+  ]);
 
   const createListingHandler = async () => {
-    // if (tokenContract) {
-    //   tokenContract.contract!.createListing([10000]);
-    // }
+    if (!wallet.signer) {
+      // TODO: popup metamask modal
+    }
+
+    try {
+      const txRes = await createToken(
+        {
+          provider: wallet.provider!,
+          signer: wallet.signer!,
+          abi: abi.data,
+        },
+        parseInt(tokenAmountValidation.value),
+        parseFloat(listingPriceValidation.value)
+      );
+
+      console.log(
+        "logs: ",
+
+        txRes.logs.find((log: any) => log.fragment.name === "TokenCreated")
+          .args[0]
+      );
+
+      const data: RealEstate = {
+        creator: wallet.address,
+        name: listingNameValidation.value,
+        description: descriptionValidation.value,
+        tokenId: txRes.logs
+          .find((log: any) => log.fragment.name === "TokenCreated")
+          .args[0].toString(),
+        totalTokenSUpply: parseInt(tokenAmountValidation.value),
+        tokenPrice: parseFloat(listingPriceValidation.value),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const createTokenMongodbInstance = await axios.post(
+        serverURLs.realEstate,
+        data
+      );
+    } catch (e: any) {
+      console.log(e);
+    }
   };
 
   return (
@@ -71,10 +89,26 @@ const CreateListing = () => {
         <h1 className="page-title">Create New Real Estate Listing</h1>
         <div className="listing-form-container">
           <div className="input-container">
-            <Input label={"Listing Name"} />
+            <Input
+              value={listingNameValidation.value}
+              onChange={listingNameValidation.onChange}
+              errorMessage={
+                !listingNameValidation.isValid &&
+                listingNameValidation.errorMessage
+              }
+              isInvalid={!listingNameValidation.isValid}
+              label={"Listing Name"}
+            />
           </div>
           <div className="input-container">
             <Textarea
+              value={descriptionValidation.value}
+              onChange={descriptionValidation.onChange}
+              errorMessage={
+                !descriptionValidation.isValid &&
+                descriptionValidation.errorMessage
+              }
+              isInvalid={!descriptionValidation.isValid}
               rows={10}
               variant="bordered"
               disableAutosize
@@ -82,18 +116,29 @@ const CreateListing = () => {
             />
           </div>
           <div className="input-container">
-            <Input type="number" label={"Amount of Tokens"} />
+            <Input
+              type="number"
+              label={"Amount of Tokens"}
+              value={tokenAmountValidation.value}
+              onChange={tokenAmountValidation.onChange}
+              errorMessage={
+                !tokenAmountValidation.isValid &&
+                tokenAmountValidation.errorMessage
+              }
+              isInvalid={!tokenAmountValidation.isValid}
+            />
           </div>
           <div className="input-container">
             <Input
               type="number"
               label={"Token Listing Price"}
-              value={listingValidation.value}
-              onChange={listingValidation.onChange}
+              value={listingPriceValidation.value}
+              onChange={listingPriceValidation.onChange}
               errorMessage={
-                !listingValidation.isValid && listingValidation.errorMessage
+                !listingPriceValidation.isValid &&
+                listingPriceValidation.errorMessage
               }
-              isInvalid={!listingValidation.isValid}
+              isInvalid={!listingPriceValidation.isValid}
               endContent={<p className="token-list-price-end-content">ETH</p>}
             />
           </div>

@@ -18,6 +18,7 @@ import {
 } from "@/stores";
 import Image from "next/image";
 import { ethers } from "ethers";
+import { getLocalProvider } from "@/utils/ethereum";
 
 export const MainNavbar = () => {
   const themeContext = useContext(ThemeContext);
@@ -29,14 +30,15 @@ export const MainNavbar = () => {
     useMetamaskExtensionInstallModalStore();
   const metamaskWrongChainIDModalStore = useMetamaskWrongChainIDModalStore();
 
-  // Handling the statechange of the wallet globally
-  useEffect(() => {
+  const initWallet = async () => {
     console.log("chainId: ", chainId);
     console.log("balance: ", balance);
     if (!connected && !connecting) {
       globalWalletStore.setAddress("");
       globalWalletStore.setBalance("0x0");
       globalWalletStore.setChainId("");
+      globalWalletStore.setProvider(undefined);
+      globalWalletStore.setSigner(undefined);
     } else if (!connected && connecting) {
       globalWalletStore.setAddress("");
       globalWalletStore.setBalance("0x0");
@@ -45,6 +47,12 @@ export const MainNavbar = () => {
       globalWalletStore.setAddress(account ?? "");
       globalWalletStore.setBalance(balance ?? "0x0");
       globalWalletStore.setChainId(chainId ?? "");
+
+      const provider = getLocalProvider();
+      const signer = await provider.getSigner();
+      globalWalletStore.setProvider(provider); // This now only works locally
+      globalWalletStore.setSigner(signer);
+
       // TODO: Uncomment this when the chain ID is set
       // if (chainId !== process.env.NEXT_PUBLIC_CHAIN_ID) {
       //   metamaskWrongChainIDModalStore.setOpen(true);
@@ -52,6 +60,11 @@ export const MainNavbar = () => {
       //   metamaskWrongChainIDModalStore.setOpen(false);
       // }
     }
+  };
+
+  // Handling the statechange of the wallet globally
+  useEffect(() => {
+    initWallet();
   }, [chainId, account, balance]);
 
   const themeChangeHandler = (event: React.MouseEvent) => {

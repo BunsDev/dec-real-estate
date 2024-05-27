@@ -9,7 +9,15 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 contract RealEstateToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable {
     uint256 private currentTokenId;
 
-    mapping(uint256 => uint256) private tokens; // tokenId => supply
+    struct Token {
+        uint256 tokenId;
+        uint256 supply;
+        uint256 listingPrice;
+    }
+
+    event TokenCreated(uint256 indexed tokenId);
+
+    mapping(uint256 => Token) private tokens;
 
     constructor(
         address initialOwner
@@ -20,12 +28,18 @@ contract RealEstateToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable {
         currentTokenId = 1;
     }
 
-    function createToken(uint256 supply) public returns (uint256, uint256) {
+    function createToken(
+        uint256 supply,
+        uint256 basePrice
+    ) public returns (uint256) {
         _mint(msg.sender, currentTokenId, supply, "0x0");
-        tokens[currentTokenId] = supply;
+        tokens[currentTokenId] = Token(currentTokenId, supply, basePrice);
+
+        emit TokenCreated(currentTokenId);
+
         currentTokenId++;
 
-        return (currentTokenId - 1, supply);
+        return currentTokenId - 1;
     }
 
     function exhcangeEthForTokens(
@@ -34,7 +48,7 @@ contract RealEstateToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable {
         uint256 numOfTokens
     ) public payable {
         require(
-            tokens[tokenId] * numOfTokens == msg.value,
+            tokens[tokenId].listingPrice * numOfTokens >= msg.value,
             "Prices do not match"
         );
         require(tokenOwner != msg.sender, "User cannot buy his own tokens");
