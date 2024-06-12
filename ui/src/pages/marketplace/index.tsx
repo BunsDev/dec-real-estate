@@ -5,7 +5,7 @@ import { Listing } from "@/components/marketplace/Listing";
 const Marketplace = () => {
   return (
     <MarketplaceLayout>
-      <Listing />
+      <Listing realEstates={[]} />
     </MarketplaceLayout>
   );
 };

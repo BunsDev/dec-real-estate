@@ -1,2 +1,2 @@
-export * from "./post";
-export * from "./get";
+export { POST } from "./post";
+export { GET } from "./get";
