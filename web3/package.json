@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2"
+  },
+  "scripts": {
+    "deploy": "npx hardhat ignition deploy ./ignition/modules/RealEstateToken.ts"
   }
 }

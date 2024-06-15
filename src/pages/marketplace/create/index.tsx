@@ -1,15 +1,15 @@
 import { MarketplaceLayout } from "@/components/marketplace/layout";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import { useInputValidation } from "@/hooks/useInputValidation";
-import { useRealEstateTokenContract } from "@/hooks/useRealEstateTokenContract";
-import { useEffect, useState } from "react";
-import { Contract, JsonRpcSigner } from "ethers";
+// import { useRealEstateTokenContract } from "@/hooks/useRealEstateTokenContract";
+// import { useEffect, useState } from "react";
+// import { Contract, JsonRpcSigner } from "ethers";
 import { useAbiQuery } from "@/hooks/useRealEstateTokenContract/query";
 import { createToken, getLocalProvider } from "@/utils/ethereum";
-import { BaseContract } from "ethers";
+// import { BaseContract } from "ethers";
 import { useMetamaskWalletStore } from "@/stores";
-import axios from "axios";
-import { serverURLs } from "@/utils";
+// import axios from "axios";
+// import { serverURLs } from "@/utils";
 import { RealEstate } from "@/utils/db/RealEstateCollection/types";
 
 const CreateListing = () => {
@@ -74,10 +74,10 @@ const CreateListing = () => {
         updatedAt: new Date(),
       };
 
-      const createTokenMongodbInstance = await axios.post(
-        serverURLs.realEstate,
-        data
-      );
+    //   const createTokenMongodbInstance = await axios.post(
+    //     serverURLs.realEstate,
+    //     data
+    //   );
     } catch (e: any) {
       console.log(e);
     }

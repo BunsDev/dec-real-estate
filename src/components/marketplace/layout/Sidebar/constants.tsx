@@ -1,5 +1,5 @@
 import { Coins, Plus, Store } from "lucide-react";
-import { defaultIconColors } from "@/utils";
+// import { defaultIconColors } from "@/utils";
 import { LucideIconWrapper } from "@/components/LucideIconWrapper/LucideIconWrapper";
 import { LucideIconThemeColorT } from "@/components/LucideIconWrapper/types";
 import { clientURLs } from "@/utils";
