@@ -132,7 +132,7 @@ export const MainNavbar = () => {
     <Navbar className={`${themeContext.theme} text-foreground bg-background`}>
       <NavbarBrand>
         <Link className="brandname" href={clientURLs.home}>
-          Dec Real Estate
+          Real Estate Rental
         </Link>
       </NavbarBrand>
       <NavbarContent className="navbar-link" justify="center">
